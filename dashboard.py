@@ -29,7 +29,7 @@ PAGES = [
 
 	]
 
-st.sidebar.image('bin/logopretadepenser.jpg')
+st.sidebar.image('bin/logopretadepenser.JPG')
 st.sidebar.title('Menu')
 selection = st.sidebar.radio("Utilisez le menu pour naviguer entre les différentes pages.", PAGES)
 
