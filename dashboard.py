@@ -103,25 +103,25 @@ def comparaison_client():
         encoder = OneHotEncoder(sparse=False, handle_unknown='ignore')
         encoded_data = encoder.fit_transform(encoded_data)
         encoded_data = pd.DataFrame(encoded_data, columns=encoder.get_feature_names_out(text_cols))
-
+        # dataframe voisins
+        knn = NearestNeighbors(n_neighbors=num_samples)
+        knn.fit(encoded_data)
+        distances, indices = knn.kneighbors(encoded_data.loc[selected_client.index])
+        neighbors = df.iloc[indices.flatten()]
+        neighbors=neighbors.reset_index()
+        
         for i, col in enumerate(text_cols):
-            # dataframe voisins
-            knn = NearestNeighbors(n_neighbors=num_samples)
-            knn.fit(encoded_data)
-            distances, indices = knn.kneighbors(encoded_data.loc[selected_client.index])
-
-            neighbors = df.iloc[indices.flatten()]
-
             plt.subplot(2, 3, i+1)
-            sns.countplot(data=df, x=col, hue='TARGET', palette={0: 'lightblue', 1: 'salmon'})
+            sns.countplot(data=neighbors, x=col, hue='TARGET', palette={0: 'lightblue', 1: 'salmon'})
             plt.xlabel(col)
             plt.xticks(rotation=45,size=8)
             plt.ylabel('Fréquence')
             plt.legend()
+    
 
             # Encadrer
             selected_category = selected_client[col].item()
-            category_index = df[col][df[col] == selected_category].index[0]
+            category_index = neighbors[col][neighbors[col] == selected_category].index[0]
             plt.axvline(x=category_index -0.5 , color='black', linestyle='--', linewidth=2)
             plt.axvline(x=category_index + 0.5, color='black', linestyle='--', linewidth=2)
 
